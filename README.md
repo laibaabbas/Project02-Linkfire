@@ -1,4 +1,6 @@
-# Project 02:Linkfire Project
+# 2024-MS-DS-11
+
+## Project 02:Linkfire Project
 
 Website Traffic Analysis
 
@@ -10,7 +12,7 @@ The goal of this project is to understand this traffic better, in particular the
 - [Pandas] What was the overall click rate (clicks/pageviews)?
 - [Pandas] How does the clickrate distribute across different links?
 
-## Data Description
+### Data Description
 
 The data set provided (traffic.csv) contains web traffic data ("events") from a few different pages ("links") over a period of 7 days including various categorical dimensions about the geographic origin of that traffic as well as a page's content: isrc.Practicalities
 

@@ -1,27 +1,32 @@
+# 2024-MS-DS-11
 import pandas as pd
 
-# Load the dataset once and reuse in all functions
-def load_data(file_path):
-    return pd.read_csv(file_path)
+data = pd.read_csv('LinkFire.csv')
 
-# 1. Total pageview events and per day
-def analyze_pageviews(data):
-    pageview_events = data[data['event'] == 'pageview']
+
+#  1. Total pageview events and per day
+def pageviews(data):
+    pageview_events = data[data['event'] == 'pageview'].copy()  
     total_pageviews = pageview_events.shape[0]
+
     pageview_events['date'] = pd.to_datetime(pageview_events['date'])
     pageviews_per_day = pageview_events.groupby(pageview_events['date'].dt.date).size()
     return total_pageviews, pageviews_per_day
 
+
 # 2. Total number of other recorded events
 def analyze_events(data):
     event_counts = data['event'].value_counts()
-    return event_counts
+    non_pageview_counts = event_counts[event_counts.index != 'pageview']
+    return non_pageview_counts
 
-# 3. Countries where the pageviews originated
+# 3. Countries where the pageviews came from
 def pageviews_by_country(data):
     pageview_events = data[data['event'] == 'pageview']
     pageviews_by_country = pageview_events.groupby('country').size().sort_values(ascending=False)
+    
     return pageviews_by_country
+
 
 # 4. Overall click rate (clicks/pageviews)
 def calculate_click_rate(data):
@@ -36,16 +41,13 @@ def clickrate_by_link(data):
     link_group['clickrate'] = link_group['click'] / link_group['pageview']
     return link_group[['click', 'pageview', 'clickrate']]
 
-# Main function to run the analysis
-def main(file_path):
-    # Load data
-    data = load_data(file_path)
-
+def main():
     # 1. Total pageviews and per day
-    total_pageviews, pageviews_per_day = analyze_pageviews(data)
-    print(f"Total pageviews: {total_pageviews}")
+    total_pageviews, pageviews_per_day = pageviews(data)
+    print("Total pageviews", total_pageviews)
     print("Pageviews per day:")
     print(pageviews_per_day)
+
 
     # 2. Total number of other recorded events
     event_counts = analyze_events(data)
@@ -59,13 +61,11 @@ def main(file_path):
 
     # 4. Overall click rate (clicks/pageviews)
     click_rate = calculate_click_rate(data)
-    print(f"\nOverall click rate: {click_rate:.2%}")
+    print(f"\nOverall click rate(clicks/pageviews): {click_rate:.2%}")
 
     # 5. Clickrate distribution across different links
     clickrate_distribution = clickrate_by_link(data)
     print("\nClick rate distribution by link:")
     print(clickrate_distribution)
 
-# Example usage
-file_path = 'LinkFire.csv'  # Replace with your CSV file path
-main(file_path)
+main()
