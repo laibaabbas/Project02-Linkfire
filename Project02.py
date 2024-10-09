@@ -10,16 +10,24 @@ def pageviews(data):
     total_pageviews = pageview_events.shape[0]
 
     pageview_events['date'] = pd.to_datetime(pageview_events['date'])
-    pageviews_per_day = pageview_events.groupby(pageview_events['date'].dt.date).size()
+    pageviews_per_day = pageview_events.groupby(by="date")["event"].count()
     return total_pageviews, pageviews_per_day
 
 
 # 2. Total number of other recorded events
+# 2. Total number of other recorded events
 def analyze_events(data):
-    event_counts = data['event'].value_counts()
-    non_pageview_counts = event_counts[event_counts.index != 'pageview']
-    return non_pageview_counts
+    event_name = set(data['event'].unique())
+    event_name.remove("pageview")
+    for event in event_name:
+        total_events= data[data['event']== event].shape[0]
+        print("total " , event ,"events is" , total_events, "\n")
 
+        # Group by date
+        event_perday = data[data['event']== event].groupby(by="date")["event"].count()
+
+        print(event , "event per day:\n" , event_perday ,"\n")
+    
 # 3. Countries where the pageviews came from
 def pageviews_by_country(data):
     pageview_events = data[data['event'] == 'pageview']
@@ -50,9 +58,7 @@ def main():
 
 
     # 2. Total number of other recorded events
-    event_counts = analyze_events(data)
-    print("\nEvent counts:")
-    print(event_counts)
+    analyze_events(data)
 
     # 3. Countries where the pageviews originated
     pageviews_country = pageviews_by_country(data)
@@ -61,7 +67,7 @@ def main():
 
     # 4. Overall click rate (clicks/pageviews)
     click_rate = calculate_click_rate(data)
-    print(f"\nOverall click rate(clicks/pageviews): {click_rate:.2%}")
+    print("\nOverall click rate(clicks/pageviews)",click_rate)
 
     # 5. Clickrate distribution across different links
     clickrate_distribution = clickrate_by_link(data)
